@@ -1,4 +1,4 @@
-function [FNET, GAMMA6] = Compute_SFRJ_thrust(PHI)
+function [FNET, GAMMA6] = Compute_SFRJ_thrust(PHI,calc_Fnet)
 % Solid Fuel Ramjet Design
 % External CEA software is used to calculate the combustion properties.
 % O. Tumuklu 03/05/2022
@@ -133,15 +133,19 @@ PT5= PT5_N/PT5_D;
 %%%%%%%%%%%% THE FOLLOWING ASSUMPTION SHOULD BE CHECKED%%%%%%%%%%%%%%%%%%%%
 GAMMA6 =GAMMA5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-syms x
-M6 = vpasolve((1/x)*(((2+(GAMMA6-1)*x^2)/(GAMMA6+1))^((GAMMA6+1)/(2*(GAMMA6-1)))) == A6/A5, x);
-% M6 = solve((1/x)*(((2+(GAMMA6-1)*x^2)/(GAMMA6+1))^((GAMMA6+1)/(2*(GAMMA6-1)))) == A6/A5, x);
+if calc_Fnet
+    syms x
+    M6 = vpasolve((1/x)*(((2+(GAMMA6-1)*x^2)/(GAMMA6+1))^((GAMMA6+1)/(2*(GAMMA6-1)))) == A6/A5, x);
+    % M6 = solve((1/x)*(((2+(GAMMA6-1)*x^2)/(GAMMA6+1))^((GAMMA6+1)/(2*(GAMMA6-1)))) == A6/A5, x);
 
-P6 = PT5/(1+(GAMMA6-1)/2*M6^2)^((GAMMA6)/(GAMMA6-1));
+    P6 = PT5/(1+(GAMMA6-1)/2*M6^2)^((GAMMA6)/(GAMMA6-1));
 
-FGROSS = P6*A6*GAMMA6*M6^2+A6*(P6-P0);
-FDRAG = P0*A0*GAMMA0*M0^2;
-FNET = FGROSS-FDRAG;
-FNET = double(FNET);
+    FGROSS = P6*A6*GAMMA6*M6^2+A6*(P6-P0);
+    FDRAG = P0*A0*GAMMA0*M0^2;
+    FNET = FGROSS-FDRAG;
+    FNET = double(FNET);
+else
+    FNET = 0;
+end
 
 end

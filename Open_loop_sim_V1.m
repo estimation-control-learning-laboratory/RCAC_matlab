@@ -3,8 +3,8 @@ clear all
 close all
 
 
-PHI = 0.20:0.002:1.2;
-PHI = [.8 1.1];
+PHI = 0.20:0.01:1.2;
+% PHI = [.8 1.1];
 for ii = 1:length(PHI)
 
     [FNET(ii), GAMMA6(ii)] = Compute_SFRJ_thrust(PHI(ii));

@@ -1,6 +1,6 @@
 prob case=_______________1512 hp 
 p,atm= 0.125
-phi=0.70
+phi=0.01
 
  reac
  fuel C2F4              wt%=100.0000  t,k= 800.000
