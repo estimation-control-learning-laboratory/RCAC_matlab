@@ -1,0 +1,12 @@
+prob case=_______________1512 hp 
+p,atm= 0.125
+phi=0.70
+
+ reac
+ fuel C2F4              wt%=100.0000  t,k= 800.000
+ oxid Air               wt%=100.0000  t,k= 180.000
+
+ output  short 
+ output massf
+ output siunits
+ end

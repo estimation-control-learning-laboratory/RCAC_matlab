@@ -1,0 +1,78 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ prob case=_______________1512 hp
+ p,atm= 0.125
+ phi=0.70
+  
+  reac
+  fuel C2F4              wt%=100.0000  t,k= 800.000
+  oxid Air               wt%=100.0000  t,k= 180.000
+  
+  output  short
+  output massf
+  output siunits
+  end
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                   PRESSURES
+
+ CASE = _______________
+
+             REACTANT                    WT FRACTION      ENERGY      TEMP
+                                          (SEE NOTE)     KJ/KG-MOL      K  
+ FUEL        C2F4                         1.0000000   -608373.974    800.000
+ OXIDANT     Air                          1.0000000     -3558.312    180.000
+
+ O/F=    1.97505  %FUEL= 33.612897  R,EQ.RATIO= 0.823687  PHI,EQ.RATIO= 0.700000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR           0.12666
+ T, K             1749.81
+ RHO, KG/CU M    3.0623-2
+ H, KJ/KG        -2126.17
+ U, KJ/KG        -2539.76
+ G, KJ/KG        -16823.2
+ S, KJ/(KG)(K)     8.3992
+
+ M, (1/n)          35.177
+ (dLV/dLP)t      -1.04007
+ (dLV/dLT)p        1.7909
+ Cp, KJ/(KG)(K)    4.9689
+ GAMMAs            1.1268
+ SON VEL,M/SEC      682.7
+
+ MASS FRACTIONS
+
+ *Ar              0.00857
+ CF4              0.08896
+ *CO              0.00015
+ COF2             0.21578
+ *CO2             0.10755
+ *F               0.05432
+ F2               0.00003
+ *NO              0.00092
+ NOF              0.00006
+ *N2              0.50090
+ *O               0.00002
+ *O2              0.02276
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+ NOTE. WEIGHT FRACTION OF FUEL IN TOTAL FUELS AND OF OXIDANT IN TOTAL OXIDANTS
+
+
+
