@@ -9,7 +9,7 @@ tic
 % randn('state',9)
 % rand('state',2)
 addpath '../'
-addpath '../RCAC_functions/'
+addpath './RCAC_functions/'
 LoadFigurePrintingProperties
 
 

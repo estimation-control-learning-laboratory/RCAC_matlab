@@ -13,7 +13,7 @@ addpath './RCAC_functions/'
 LoadFigurePrintingProperties
 
 
-steps           = 1000;
+steps           = 10000;
 FLAG.steps      = steps;
 
 FLAG.Nc         = 0;
@@ -74,20 +74,21 @@ end
 % theta_nn0(1) = .800;
 %%
 
-up = [1 2 3];
+up = [1 2 3 4 5 6];
 lu          = numel(up);
 ltheta      = CalculateRegSize( FLAG.Nc, lu, lz, ly, FLAG);
 
 
 FLAG.Ru     = 0e-5;
-FLAG.R0     = 1e2;
-FLAG.lambda = 0.9;
+FLAG.R0     = 1e6;
+FLAG.lambda = 1;
 
 FILT.TYPE   = 'TF';
 
 FILT.Nu     = -1;
 FILT.Nu     = -[1 0 0 0 1 0 0 0 1];
 FILT.Nu     = -[1 0 0 0 0 1 0 1 0];
+FILT.Nu     = 1*vec(eye(6)*randn(6,1))';
 FILT.Nf     = size(FILT.Nu,2)/lu;
 
 
@@ -112,7 +113,7 @@ for ii = 1:steps
         [u(:,ii), theta(:,ii)] = ...
             RCAC_V6(ii, zeros(lu,1), 0*z(:,ii), 0*z(:,ii), 0, FILT, FLAG);
     else
-        theta_nn(up) =  u(:,ii-1);
+        theta_nn(up) =  u(:,ii-1)/100;
         Theta = [theta_nn(1:3)' theta_nn(4:6)'];
         z(:,ii) = compute_NN_RCPE_error(Theta);
 
@@ -130,6 +131,7 @@ end
 for kk = 1:4
     Yhat_f(1,kk) = [1 1]*neural_layer(X(:,kk),Theta);
 end
+Theta
 [Yhat_f' Y']
 %%
 close all

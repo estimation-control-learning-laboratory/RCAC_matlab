@@ -13,7 +13,7 @@ addpath './RCAC_functions/'
 LoadFigurePrintingProperties
 
 
-steps           = 100000;
+steps           = 10000;
 FLAG.steps      = steps;
 
 FLAG.Nc         = 0;

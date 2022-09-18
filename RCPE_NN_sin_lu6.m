@@ -13,7 +13,7 @@ addpath './RCAC_functions/'
 LoadFigurePrintingProperties
 
 
-steps           = 1000;
+steps           = 10000;
 FLAG.steps      = steps;
 
 FLAG.Nc         = 0;
@@ -48,25 +48,9 @@ lx  = size(X,2);
 
 % The XOR function has 4 possible values
 % Take one of these by random and use it for error calculations
-lz  = size(1,1);
-ly  = size(1,1);
+lz  = 1;
+ly  = 1;
 
-
-% theta_nn0 = randn(1,6);
-
-%manually set 6 of them
-theta_nn0(1) = 4.510866097865148e+01;
-
-theta_nn0(2)= -4.481706269421458e+01;
-theta_nn0(3)= -2.311066575047726e+01;
-theta_nn0(4)= -4.584524260712102e+01;
-theta_nn0(5)=   4.522449892595682e+01;
-theta_nn0(6)= -2.293930732337328e+01;
-
-Theta = [theta_nn0(1:3)' theta_nn0(4:6)'];
-for kk = 1:4
-    Yhat_f(1,kk) = [1 1]*neural_layer(X(:,kk),Theta);
-end
 
 
 
@@ -74,20 +58,21 @@ end
 % theta_nn0(1) = .800;
 %%
 
-up = [1 2 3];
+up = [1 2 3 4];
 lu          = numel(up);
 ltheta      = CalculateRegSize( FLAG.Nc, lu, lz, ly, FLAG);
 
 
 FLAG.Ru     = 0e-5;
-FLAG.R0     = 1e2;
-FLAG.lambda = 0.9;
+FLAG.R0     = 1e5;
+FLAG.lambda = 1;
 
 FILT.TYPE   = 'TF';
 
 FILT.Nu     = -1;
 FILT.Nu     = -[1 0 0 0 1 0 0 0 1];
 FILT.Nu     = -[1 0 0 0 0 1 0 1 0];
+FILT.Nu     = -1*vec(eye(4)*randn(4,1))';
 FILT.Nf     = size(FILT.Nu,2)/lu;
 
 
@@ -98,7 +83,7 @@ y0          = zeros(ly,steps);
 y0_hat      = y0;
 z           = zeros(lz,steps);
 theta       = zeros(ltheta,steps);
-theta_nn = theta_nn0;
+theta_nn = randn(2);
 theta_nn(up) = 0;
 %% Simulation
 for ii = 1:steps
@@ -106,15 +91,15 @@ for ii = 1:steps
     if ii == 1
 
 
-        Theta = [theta_nn(1:3)' theta_nn(4:6)'];
-        z(:,ii) = compute_NN_RCPE_error(Theta);
+        Theta = rand(2);
+        z(:,ii) = compute_NN_sin_error(Theta);
         
         [u(:,ii), theta(:,ii)] = ...
             RCAC_V6(ii, zeros(lu,1), 0*z(:,ii), 0*z(:,ii), 0, FILT, FLAG);
     else
-        theta_nn(up) =  u(:,ii-1);
-        Theta = [theta_nn(1:3)' theta_nn(4:6)'];
-        z(:,ii) = compute_NN_RCPE_error(Theta);
+        theta_nn(up) =  u(:,ii-1)/1;
+        Theta = [theta_nn(1:2)' theta_nn(3:4)'];
+        z(:,ii) = compute_NN_sin_error(Theta);
 
         [u(:,ii), theta(:,ii)] = ...
             RCAC_V6(ii, u(:,ii-1), z(:,ii-1), 0*z(:,ii-1), 0, FILT, FLAG);
@@ -127,10 +112,10 @@ end
 
 
 
-for kk = 1:4
-    Yhat_f(1,kk) = [1 1]*neural_layer(X(:,kk),Theta);
-end
-[Yhat_f' Y']
+%%
+compute_NN_sin_error(Theta)
+
+
 %%
 close all
 umin = 0;
