@@ -14,30 +14,30 @@ function [u_out, theta_out] = RCAC_V6(kk, u_in, z_in, yp_in, r_in, FILT, varargi
 %                       FILT.nf     Number of coefficients in the FIR tf
 %                       FILT.Nu     FILT.nf lz by lu coefficients stacked
 %                                   left to right.
-%               
+%
 %   Outputs:    u_out   u(k) = Phi(k) theta(k)
 %               theta   theta(k)
 %               OptData Data structure to output anything you want
 %
 %   Author:     Ankit Goel,
-%               Aerospace Engineering Depratment, 
-%               University of Michigan, Ann Arbor. 
+%               Aerospace Engineering Depratment,
+%               University of Michigan, Ann Arbor.
 %
-%   Version:    6.0     2017/11/20  
-%   
+%   Version:    6.0     2017/11/20
+%
 %   License:    RCAC license. Need to figure out what this should mean!!
 
 
 %Persistent varaibles
 persistent ltheta lu lz ly         % Vector lengths
 persistent u_h yp_h z_h r_h             % Data buffers
-                   % For Batch
+% For Batch
 persistent P_k theta_k                  % For RLS
-persistent intg 
+persistent intg
 
 
 % 14 November 2016. ACS2 variables
-persistent PHI_window  u_window z_window  pc pn nf Nc 
+persistent PHI_window  u_window z_window  pc pn nf Nc
 persistent Xphi Xu  % Filtering states
 persistent PHI_filt_window  u_filt_window
 
@@ -55,7 +55,7 @@ if isempty(varargin)                    % FLAG defaults
     FLAG.Rz         = 1;                % Performance weight
     FLAG.Ru         = 0;             % Control weight
     FLAG.lambda     = 1;                % Forgetting factor
-    
+
     % Controller structure
     FLAG.RegZ       = 1;                % 0->y goes in the controller. 1->z
     FLAG.FF         = 0;                % Feedforward structure
@@ -79,7 +79,7 @@ if (kk==1)                              % Controller structure
     r_h     = zeros(lz,Nc+1);            % Command Buffer
     theta_h = zeros(ltheta,2);          % Controller Parameter Buffer
     intg    = 0;
-    
+
     if FLAG.RegZ
         yp_h    = zeros(lz,Nc+1);            % Regressor variable Buffer
     else
@@ -89,7 +89,7 @@ if (kk==1)                              % Controller structure
 end
 
 
-         
+
 
 
 
@@ -121,18 +121,18 @@ PHI     = BuildRegressor( FLAG.Nc, lu, u_h, yp_h, r_h, intg,FLAG  );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if (kk == 1)                            % Define lengths
     %% Following variables are used in Gf optimization
-    pc          = FLAG.window;          
-    pn          = round(pc+nf+Nc-1+1);         
+    pc          = FLAG.window;
+    pn          = round(pc+nf+Nc-1+1);
     PHI_window  = zeros(lu, ltheta, pn);
     u_window    = zeros(lu, pn);
     z_window    = zeros(lz, pc);
-    
+
     PHI_filt_window     = zeros(lz, ltheta, 2*ltheta);
     u_filt_window       = zeros(lz, 2*ltheta);
-    
+
     P_k     = eye(ltheta)/FLAG.R0;
     theta_k = 0e-2+zeros(ltheta,1);
-        
+
 
 end
 
@@ -140,11 +140,11 @@ end
 
 %% Store data buffers here
 
-    nf_end = 5;
-    u_window(:,2:nf+nf_end)       = u_window(:,1:nf+nf_end-1);
-    z_window(:,2:nf+nf_end)       = z_window(:,1:nf+nf_end-1);
-    PHI_window(:,:,2:nf+nf_end)   = PHI_window(:,:,1:nf+nf_end-1);
-    
+nf_end = 5;
+u_window(:,2:nf+nf_end)       = u_window(:,1:nf+nf_end-1);
+z_window(:,2:nf+nf_end)       = z_window(:,1:nf+nf_end-1);
+PHI_window(:,:,2:nf+nf_end)   = PHI_window(:,:,1:nf+nf_end-1);
+
 
 
 u_window(:,1)           = u_in;     % the first column vector is u(kk-1)
@@ -155,38 +155,32 @@ PHI_window(:,:,1)       = PHI;      % the first lu by ltheta matrix is PHI(kk), 
 %%
 
 
-    [ PHI_filt, u_filt, z_filt, Xphi, Xu ] = FilterSignals( kk, FILT, PHI_window, u_window,z_window, Xphi, Xu );
-    
-    u_filt_window(:,2:end)       = u_filt_window(:,1:end-1);
-    PHI_filt_window(:,:,2:end)   = PHI_filt_window(:,:,1:end-1);
-    u_filt_window(:,1)           = u_filt;
-    PHI_filt_window(:,:,1)       = PHI_filt;
-    
-   
+[ PHI_filt, u_filt, z_filt, Xphi, Xu ] = FilterSignals( kk, FILT, PHI_window, u_window,z_window, Xphi, Xu );
+
+u_filt_window(:,2:end)       = u_filt_window(:,1:end-1);
+PHI_filt_window(:,:,2:end)   = PHI_filt_window(:,:,1:end-1);
+u_filt_window(:,1)           = u_filt;
+PHI_filt_window(:,:,1)       = PHI_filt;
 
 
-    
 
-    FLAG.PHI = PHI;
-    if kk> max(ltheta,nf*lz*lu)+1
-        control_on 	= 1;
-        
-        [ theta_k, P_k ] = RLS_update(kk, theta_k, P_k, PHI_filt, z_filt, u_filt,  FLAG);
-        
-    else
-        control_on  = 0;
-    end
+
+
+
+FLAG.PHI = PHI;
+if kk> max(ltheta,nf*lz*lu)+1
+    control_on 	= 1;
+
+    [ theta_k, P_k ] = RLS_update(kk, theta_k, P_k, PHI_filt, z_filt, u_filt,  FLAG);
+
+else
+    control_on  = 0;
+end
 %     disp([kk z_filt u_filt PHI_filt theta_k'])
 %     disp([kk z_filt u_filt])
-    
-  
-    theta_out   = theta_k;
-    
-    
 
 
-
-
+theta_out   = theta_k;
 
 % Compute the controller
 theta_out   = theta_out(:);
@@ -195,21 +189,3 @@ u_out       = control_on * PHI * theta_out;    % u(kk) = Phi(kk) theta(kk)
 
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

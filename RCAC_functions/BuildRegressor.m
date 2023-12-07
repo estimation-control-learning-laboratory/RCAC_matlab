@@ -79,6 +79,12 @@ elseif strcmp(FLAG.ContType, 'PID')
     PHI     = [y_h(:,1) intg_state y_h(:,1)-y_h(:,2)];
 elseif strcmp(FLAG.ContType, 'PI')
     PHI     = [y_h(:,1) intg_state];    
+elseif strcmp(FLAG.ContType, 'P')
+    PHI     = [y_h(:,1)];    
+elseif strcmp(FLAG.ContType, 'FSF')
+    PHI     = [y_h(:,1)'];
+elseif strcmp(FLAG.ContType, 'FSFI')
+    PHI     = [y_h(:,1)' -intg_state];
 end
 
 

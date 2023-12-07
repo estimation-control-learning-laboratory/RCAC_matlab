@@ -48,6 +48,12 @@ else
         ltheta  = 3;
     elseif strcmp(ContType, 'PI')
         ltheta  = 2;
+    elseif strcmp(ContType, 'P')
+        ltheta  = 1;
+    elseif strcmp(ContType, 'FSF')
+        ltheta  = FLAG.lx;
+    elseif strcmp(FLAG.ContType, 'FSFI')
+        ltheta  = FLAG.lx+FLAG.ly;
     end
 end
 
